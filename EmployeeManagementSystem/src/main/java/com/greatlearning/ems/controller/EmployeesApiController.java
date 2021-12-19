@@ -16,8 +16,8 @@ import com.greatlearning.ems.entity.Employee;
 import com.greatlearning.ems.spi.EmployeeService;
 
 @RestController
-@RequestMapping("/employees")
-public class EmployeesController {
+@RequestMapping("/api/employees")
+public class EmployeesApiController {
 	
 	@Autowired
 	private EmployeeService employeeService;
