@@ -17,7 +17,7 @@ import com.greatlearning.ems.spi.EmployeeService;
 
 @RestController
 @RequestMapping("/employees")
-public class EmployeesApiController {
+public class EmployeesController {
 	
 	@Autowired
 	private EmployeeService employeeService;
@@ -44,30 +44,23 @@ public class EmployeesApiController {
 	
 	@GetMapping("getByFirstName")
 	public List<Employee> getByFirstName(@RequestParam String firstName) {
-
 		return employeeService.searchBy(firstName);
-
 	}
 	
 	@GetMapping("getSort")
 	public List<Employee> getSort(@RequestParam Direction direction) {
-
 		return employeeService.sortBy(direction);
 	}
 	
 	@PutMapping
 	public Employee put(@RequestParam("employeeId") int theId, Employee employee) {
-
 		employeeService.save(employee);
-		
 		return employee;
 	}
 	
 	@DeleteMapping
 	public String delete(@RequestParam("employeeId") int theId) {
-		
 		employeeService.deleteById(theId);
-		
 		return String.format("Employee {0} Deleted Successfully", theId);
 	}
 	
