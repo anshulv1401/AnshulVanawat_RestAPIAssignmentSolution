@@ -43,12 +43,12 @@ public class EmployeesController {
 	}
 
 	@GetMapping
-	public List<Employee> getAll() {
+	public List<Employee> get() {
 		return employeeService.findAll();
 	}
 
 	@GetMapping("{id}")
-	public Employee getById(@PathVariable int id) {
+	public Employee get(@PathVariable int id) {
 		var emp = employeeService.findById(id);
 		return emp.get();
 	}
@@ -81,12 +81,12 @@ public class EmployeesController {
 	}
 	
 	@GetMapping("search/{firstName}")
-	public List<Employee> getByFirstName(@PathVariable String firstName) {
+	public List<Employee> get(@PathVariable String firstName) {
 		return employeeService.searchBy(firstName);
 	}
 
 	@GetMapping("sort")
-	public List<Employee> getSort(@RequestParam Direction order) {
+	public List<Employee> get(@RequestParam Direction order) {
 		return employeeService.sortBy(order);
 	}
 

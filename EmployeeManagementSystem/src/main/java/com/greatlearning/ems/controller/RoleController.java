@@ -27,7 +27,7 @@ public class RoleController {
 	@Autowired
 	private RoleService roleService;
 
-	@PostMapping()
+	@PostMapping
 	public String post(@RequestBody() RoleDto role) {
 		roleService.save(new Role(role.getName()));
 		return String.format("Role %s Saved Successfully", role.getName());
@@ -44,8 +44,8 @@ public class RoleController {
 		return roleService.findById(id).get();
 	}
 
-	@GetMapping()
-	public List<Role> getAll() {
+	@GetMapping
+	public List<Role> get() {
 		return roleService.findAll();
 	}
 }
