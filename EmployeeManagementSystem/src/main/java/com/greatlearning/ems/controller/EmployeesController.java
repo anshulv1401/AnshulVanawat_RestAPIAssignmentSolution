@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.greatlearning.ems.entity.Employee;
 import com.greatlearning.ems.spi.EmployeeService;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 @RestController
 @RequestMapping("/employees")
 public class EmployeesController {
@@ -23,13 +25,13 @@ public class EmployeesController {
 	private EmployeeService employeeService;
 
 	@PostMapping()
-	public String post(@RequestParam("firstname") String firstName,
-			@RequestParam("lastname") String lastName, @RequestParam("email") String email) {
+	public String post(@RequestBody() String firstName,
+			@RequestBody() String lastName, @RequestBody() String email) {
 
 		Employee theEmployee = new Employee(firstName, lastName, email);
 		employeeService.save(theEmployee);
 		
-		return String.format("Employee {0} {1} Saved Successfully", firstName, lastName);
+		return String.format("Employee %1$s %2$s Saved Successfully", firstName, lastName);
 	}
 	
 	@GetMapping("getAll")

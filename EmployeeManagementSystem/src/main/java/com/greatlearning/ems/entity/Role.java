@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "roles")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class Role {
 	@Id
@@ -24,4 +23,9 @@ public class Role {
 
 	@Column(name = "name")
 	private String name;
+
+	public Role(String name) {
+		super();
+		this.name = name;
+	}
 }

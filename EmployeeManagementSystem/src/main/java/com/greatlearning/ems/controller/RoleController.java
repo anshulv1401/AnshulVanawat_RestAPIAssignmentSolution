@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.greatlearning.ems.entity.Role;
@@ -25,35 +26,35 @@ public class RoleController {
 	private RoleService roleService;
 
 	@PostMapping()
-	public String post(@RequestBody() Role role) {
+	public String post(@RequestBody() String name) {
 
-		var roleFromDB = roleService.findById(role.getId());
+		var roleFromDB = roleService.findByName(name);
 		if (roleFromDB.isPresent()) {
-			return String.format("Role with id %s already exists", role.getId());
+			return String.format("Role %s already exists", name);
 		}
-		roleService.save(role);
-		return String.format("Role %s Saved Successfully", role.getName());
+		roleService.save(new Role(name));
+		return String.format("Role %s Saved Successfully", name);
 	}
 
 	@PutMapping
-	public Role put(@RequestParam("roleId") int theId, Role role) {
+	public Role put(@RequestParam int theId, @RequestBody String name) {
 
 		var roleFromDB = roleService.findById(theId);
 
 		if (roleFromDB.isPresent()) {
 			var newRole = roleFromDB.get();
-			newRole.setName(role.getName());
+			newRole.setName(name);
 			roleService.save(newRole);
 			return newRole;
 		} else {
-			var newRole = new Role(theId, role.getName());
+			var newRole = new Role(name);
 			roleService.save(newRole);
 			return newRole;
 		}
 	}
 
 	@DeleteMapping
-	public String delete(@RequestParam("roleId") int theId) {
+	public String delete(@RequestParam("id") int theId) {
 		var roleFromDB = roleService.findById(theId);
 		if (roleFromDB.isEmpty()) {
 			return String.format("Role with id %s does not exists", theId);
@@ -63,7 +64,7 @@ public class RoleController {
 	}
 
 	@GetMapping
-	public List<Role> get(Optional<Integer> id) {
+	public List<Role> get(@RequestPart Optional<Integer> id) {
 
 		if (id.isEmpty())
 			return roleService.findAll();
