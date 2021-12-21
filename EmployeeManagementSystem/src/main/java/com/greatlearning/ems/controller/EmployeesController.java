@@ -3,6 +3,7 @@ package com.greatlearning.ems.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +42,7 @@ public class EmployeesController {
 				employeeDto.getLastName());
 	}
 
-	@GetMapping("getAll")
+	@GetMapping
 	public List<Employee> getAll() {
 		return employeeService.findAll();
 	}
@@ -51,16 +52,6 @@ public class EmployeesController {
 		var emp = employeeService.findById(id);
 		return emp.get();
 	}
-
-//	@GetMapping("getByFirstName")
-//	public List<Employee> getByFirstName(@RequestParam String firstName) {
-//		return employeeService.searchBy(firstName);
-//	}
-
-//	@GetMapping("getSort")
-//	public List<Employee> getSort(@RequestParam Direction direction) {
-//		return employeeService.sortBy(direction);
-//	}
 
 	@PutMapping("{id}")
 	public Employee put(@RequestBody EmployeeDto employeeDto, @PathVariable int id) {
@@ -87,6 +78,16 @@ public class EmployeesController {
 	public String delete(@PathVariable int id) {
 		employeeService.deleteById(id);
 		return String.format("Employee %s Deleted Successfully", id);
+	}
+	
+	@GetMapping("search/{firstName}")
+	public List<Employee> getByFirstName(@PathVariable String firstName) {
+		return employeeService.searchBy(firstName);
+	}
+
+	@GetMapping("sort")
+	public List<Employee> getSort(@RequestParam Direction order) {
+		return employeeService.sortBy(order);
 	}
 
 }
