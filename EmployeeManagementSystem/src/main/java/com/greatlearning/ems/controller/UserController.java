@@ -53,7 +53,7 @@ public class UserController {
 		return String.format("User with id %s Deleted Successfully", theId);
 	}
 
-	@GetMapping
+	@GetMapping("getById")
 	public List<User> getById(int id) {
 
 		List<User> users = new ArrayList<User>();
@@ -63,7 +63,7 @@ public class UserController {
 		return users;
 	}
 
-	@GetMapping
+	@GetMapping("getAll")
 	public List<User> getAll() {
 		return userService.findAll();
 	}
