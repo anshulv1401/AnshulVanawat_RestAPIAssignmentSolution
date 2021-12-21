@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.greatlearning.ems.dto.RoleDto;
 import com.greatlearning.ems.entity.Role;
 import com.greatlearning.ems.spi.RoleService;
 
@@ -26,14 +27,14 @@ public class RoleController {
 	private RoleService roleService;
 
 	@PostMapping()
-	public String post(@RequestBody() String name) {
+	public String post(@RequestBody() RoleDto role) {
 
-		var roleFromDB = roleService.findByName(name);
+		var roleFromDB = roleService.findByName(role.getName());
 		if (roleFromDB.isPresent()) {
-			return String.format("Role %s already exists", name);
+			return String.format("Role %s already exists", role.getName());
 		}
-		roleService.save(new Role(name));
-		return String.format("Role %s Saved Successfully", name);
+		roleService.save(new Role(role.getName()));
+		return String.format("Role %s Saved Successfully", role.getName());
 	}
 
 	@PutMapping
@@ -64,7 +65,7 @@ public class RoleController {
 	}
 
 	@GetMapping
-	public List<Role> get(@RequestPart Optional<Integer> id) {
+	public List<Role> get(Optional<Integer> id) {
 
 		if (id.isEmpty())
 			return roleService.findAll();

@@ -7,7 +7,7 @@ insert into roles (name) values('USER');
 insert into users_roles (user_id, role_id) values (1, 1);
 insert into users_roles (user_id, role_id) values (2, 2);
 
-insert into employee (id, first_name, last_name, email) values (1, 'Anshul', 'Vanawat', 'anshulv1401@gmail.com');
-insert into employee (id, first_name, last_name, email) values (2, 'Reenal', 'Jain', 'anshulv1401@gmail.com');
-insert into employee (id, first_name, last_name, email) values (3, 'Test1', 'Test1', 'anshulv1401@gmail.com');
-insert into employee (id, first_name, last_name, email) values (4, 'Test2', 'Test2', 'anshulv1401@gmail.com');
+insert into employee (id, first_name, last_name, email) values (1, 'Anshul', 'Vanawat', 'anshul@gmail.com');
+insert into employee (id, first_name, last_name, email) values (2, 'Reenal', 'Jain', 'Reenal@gmail.com');
+insert into employee (id, first_name, last_name, email) values (3, 'Test1', 'Test1', 'Test1@gmail.com');
+insert into employee (id, first_name, last_name, email) values (4, 'Test2', 'Test2', 'Test2@gmail.com');

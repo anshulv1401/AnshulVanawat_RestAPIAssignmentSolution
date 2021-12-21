@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.greatlearning.ems.dto.UserDto;
 import com.greatlearning.ems.entity.Role;
 import com.greatlearning.ems.entity.User;
 import com.greatlearning.ems.spi.UserService;
@@ -27,17 +28,17 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping()
-	public String post(@RequestBody() String userName, @RequestBody() String password, @RequestBody List<Role> roles) {
-		var userFromDB = userService.findByUserName(userName);
+	public String post(@RequestBody() UserDto userDto) {
+		var userFromDB = userService.findByUserName(userDto.getUsername());
 
 		if (userFromDB.isPresent()) {
-			return String.format("User %s already exists", userName);
+			return String.format("User %s already exists", userDto.getUsername());
 		}
 
-		User newUser = new User(userName, password, roles);
+		User newUser = new User(userDto.getUsername(), userDto.getPassword(), userDto.getRoles());
 		userService.save(newUser);
 
-		return String.format("User %s Created Successfully", userName);
+		return String.format("User %s Created Successfully", userDto.getUsername());
 	}
 
 	@DeleteMapping
@@ -53,18 +54,17 @@ public class UserController {
 		return String.format("User with id %s Deleted Successfully", theId);
 	}
 
-	@GetMapping("getById")
-	public List<User> getById(int id) {
+	@GetMapping()
+	public List<User> get(Optional<Integer> id) {
 
-		List<User> users = new ArrayList<User>();
-		var user = userService.findById(id);
-		if (user.isPresent())
-			users.add(user.get());
-		return users;
-	}
-
-	@GetMapping("getAll")
-	public List<User> getAll() {
-		return userService.findAll();
+		if (id.isEmpty())
+			return userService.findAll();
+		else {
+			List<User> users = new ArrayList<User>();
+			var user = userService.findById(id.get());
+			if (user.isPresent())
+				users.add(user.get());
+			return users;
+		}
 	}
 }

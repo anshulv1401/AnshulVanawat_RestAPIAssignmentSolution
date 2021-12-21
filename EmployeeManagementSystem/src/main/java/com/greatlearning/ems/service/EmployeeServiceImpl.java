@@ -1,14 +1,18 @@
 package com.greatlearning.ems.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.greatlearning.ems.entity.Employee;
+import com.greatlearning.ems.entity.User;
 import com.greatlearning.ems.repository.EmployeeRepository;
 import com.greatlearning.ems.spi.EmployeeService;
 
@@ -53,5 +57,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public List<Employee> sortBy(Direction direction) {
 		return employeeRepository.findAll(Sort.by(direction, "firstName"));
+	}
+
+	@Override
+	public Optional<Employee> findByEmail(String theEmail) {
+		
+		Employee employeeWithEmail = new Employee();
+		employeeWithEmail.setEmail(theEmail);
+		ExampleMatcher matcher = ExampleMatcher.matching()
+				.withMatcher("email", ExampleMatcher.GenericPropertyMatchers.ignoreCase())
+				.withIgnorePaths("id", "name");
+
+		Example<Employee> example = Example.of(employeeWithEmail, matcher);
+
+		return employeeRepository.findOne(example);
 	}
 }

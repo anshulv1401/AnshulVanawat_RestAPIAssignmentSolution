@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "roles")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Role {
 	@Id
 	@Column(name = "role_id")
