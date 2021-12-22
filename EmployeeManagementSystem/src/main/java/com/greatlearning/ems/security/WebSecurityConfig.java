@@ -41,15 +41,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
-		http
-			.authorizeRequests()
-			.antMatchers("/roles", "/users", "/api/employees").hasAnyAuthority("USER", "ADMIN")
-			.anyRequest().authenticated()
-			.and().formLogin().loginProcessingUrl("/login").permitAll()
-			.and().logout().logoutSuccessUrl("/login").permitAll()
-			.and().exceptionHandling().accessDeniedPage("/accessDenied")
-			.and().cors().and().csrf().disable();
+		http.authorizeRequests()
+		.antMatchers("/", "/roles", "/users", "/api/employees").hasAnyAuthority("USER", "ADMIN")
+		.antMatchers("/api/employees/add").hasAuthority("ADMIN")
+		.anyRequest().authenticated()
+		.and().formLogin().loginProcessingUrl("/login").permitAll()
+		.and().logout().logoutSuccessUrl("/login").permitAll()
+		.and().exceptionHandling().accessDeniedPage("/accessDenied")
+		.and().cors().and().csrf().disable();
 	}
 	
 	@Override

@@ -25,7 +25,7 @@ public class EmployeesController {
 	@Autowired
 	private EmployeeService employeeService;
 
-	@PostMapping
+	@PostMapping("add")
 	public String post(@RequestBody() EmployeeDto employeeDto) {
 
 		var employeeByEmail = employeeService.findByEmail(employeeDto.getEmail());
