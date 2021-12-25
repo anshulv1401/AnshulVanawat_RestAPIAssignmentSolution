@@ -15,7 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "roles", uniqueConstraints = @UniqueConstraint(columnNames={"name"}))
+@Table(name = "roles", uniqueConstraints = @UniqueConstraint(columnNames = { "name" }))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,7 +32,7 @@ public class Role {
 		super();
 		this.name = name;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.greatlearning.ems.dto.EmployeeDto;
 import com.greatlearning.ems.entity.Employee;
-import com.greatlearning.ems.exception.EmployeeNotFoundException;
+import com.greatlearning.ems.exception.ResouceInvalidException;
+import com.greatlearning.ems.exception.ResouceNotFoundException;
 import com.greatlearning.ems.spi.EmployeeService;
 import com.greatlearning.ems.util.EmployeeHelper;
 
@@ -31,7 +32,7 @@ public class EmployeesController {
 	public String post(@RequestBody() EmployeeDto employeeDto) throws Exception {
 
 		var employeeByEmail = employeeService.findByEmail(employeeDto.getEmail());
-		
+
 		if (employeeByEmail.isPresent()) {
 			return String.format("Employee %s already Exist", employeeDto.getEmail());
 		}
@@ -42,7 +43,7 @@ public class EmployeesController {
 		if (!EmployeeHelper.isValid(theEmployee)) {
 			return "Employee details cannot be empty : " + theEmployee.toString();
 		}
-		
+
 		employeeService.save(theEmployee);
 
 		return String.format("Employee %1$s %2$s Saved Successfully", employeeDto.getFirstName(),
@@ -56,8 +57,7 @@ public class EmployeesController {
 
 	@GetMapping("{id}")
 	public Employee get(@PathVariable long id) {
-		return employeeService.findById(id)
-			      .orElseThrow(() -> new EmployeeNotFoundException(id));
+		return employeeService.findById(id).orElseThrow(() -> new ResouceNotFoundException(Employee.class, id));
 	}
 
 	@PutMapping("{id}")
@@ -71,27 +71,35 @@ public class EmployeesController {
 			theEmployee.setEmail(employeeDto.getEmail());
 			theEmployee.setFirstName(employeeDto.getFirstName());
 			theEmployee.setLastName(employeeDto.getLastName());
-			
+
 			if (!EmployeeHelper.isValid(theEmployee)) {
-				throw new Exception("Employee details cannot be empty : " + theEmployee.toString());
+				throw new ResouceInvalidException(Employee.class, theEmployee.toString());
 			}
-			
+
 			employeeService.save(theEmployee);
 		} else {
-			theEmployee = new Employee(id, employeeDto.getFirstName(), employeeDto.getLastName(), employeeDto.getEmail());
-			
+			theEmployee = new Employee(id, employeeDto.getFirstName(), employeeDto.getLastName(),
+					employeeDto.getEmail());
+
 			if (!EmployeeHelper.isValid(theEmployee)) {
-				throw new Exception("Employee details cannot be empty : " + theEmployee.toString());
+				throw new ResouceInvalidException(Employee.class, theEmployee.toString());
 			}
-			
+
 			employeeService.insert(theEmployee);
 		}
-		
+
 		return theEmployee;
 	}
 
 	@DeleteMapping("{id}")
 	public String delete(@PathVariable long id) {
+		
+		var resouceById = employeeService.findById(id);
+
+		if (resouceById.isEmpty()) {
+			throw new ResouceNotFoundException(Employee.class, id);
+		}
+		
 		employeeService.deleteById(id);
 		return String.format("Employee %s Deleted Successfully", id);
 	}
