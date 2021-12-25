@@ -46,39 +46,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 		.httpBasic()
 		.and().authorizeRequests()
-		//.antMatchers(HttpMethod.GET, "/api/employees/**").hasRole("ADMIN")
-		.antMatchers(HttpMethod.POST, "/api/employees").hasAuthority("ADMIN")
-		.antMatchers(HttpMethod.PUT, "/api/employees/**").hasAuthority("ADMIN")
-		//.antMatchers(HttpMethod.DELETE, "/api/employees/**").hasRole("ADMIN")
+		.antMatchers(HttpMethod.POST, "/employees").hasAuthority("ADMIN")
+		.antMatchers(HttpMethod.PUT, "/employees/**").hasAuthority("ADMIN")
+		.antMatchers(HttpMethod.GET, "/employees/**").hasAnyAuthority("ADMIN", "USER")
+		.antMatchers(HttpMethod.DELETE, "/employees/**").hasAnyAuthority("ADMIN", "USER")
+		
+		.antMatchers(HttpMethod.POST, "/roles").hasAnyAuthority("ADMIN", "USER")
+		.antMatchers(HttpMethod.PUT, "/roles/**").hasAnyAuthority("ADMIN", "USER")
+		.antMatchers(HttpMethod.GET, "/roles/**").hasAnyAuthority("ADMIN", "USER")
+		.antMatchers(HttpMethod.DELETE, "/roles/**").hasAnyAuthority("ADMIN", "USER")
+		
+		.antMatchers(HttpMethod.POST, "/users").hasAnyAuthority("ADMIN", "USER")
+		.antMatchers(HttpMethod.PUT, "/users/**").hasAnyAuthority("ADMIN", "USER")
+		.antMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ADMIN", "USER")
+		.antMatchers(HttpMethod.DELETE, "/users/**").hasAnyAuthority("ADMIN", "USER")
+		
 		.anyRequest().authenticated()
 		.and().formLogin().loginProcessingUrl("/login").permitAll()
 		.and().logout().logoutSuccessUrl("/login").permitAll()
 		.and().exceptionHandling().accessDeniedPage("/accessDenied")
 		.and().cors().and().csrf().disable();
-
-//		http
-//        //HTTP Basic authentication
-//        .httpBasic()
-//        .and()
-//        .authorizeRequests()
-//        .antMatchers(HttpMethod.GET, "/books/**").hasRole("USER")
-//        .antMatchers(HttpMethod.POST, "/books").hasRole("ADMIN")
-//        .antMatchers(HttpMethod.PUT, "/books/**").hasRole("ADMIN")
-//        .antMatchers(HttpMethod.PATCH, "/books/**").hasRole("ADMIN")
-//        .antMatchers(HttpMethod.DELETE, "/books/**").hasRole("ADMIN")
-//        .and()
-//        .csrf().disable()
-//        .formLogin().disable();
-//		
-		
-//		http.authorizeRequests()
-//		.antMatchers("/", "/roles", "/users", "/api/employees").hasAnyAuthority("USER", "ADMIN")
-//		.antMatchers("/api/employees/add").hasAuthority("ADMIN")
-//		.anyRequest().authenticated()
-//		.and().formLogin().loginProcessingUrl("/login").permitAll()
-//		.and().logout().logoutSuccessUrl("/login").permitAll()
-//		.and().exceptionHandling().accessDeniedPage("/accessDenied")
-//		.and().cors().and().csrf().disable();
 	}
 	
 	@Override

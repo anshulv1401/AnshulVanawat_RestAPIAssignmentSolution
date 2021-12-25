@@ -24,7 +24,7 @@ import com.greatlearning.ems.spi.EmployeeService;
 import com.greatlearning.ems.util.ResouceValidationUtil;
 
 @RestController
-@RequestMapping("/api/employees")
+@RequestMapping("/employees")
 public class EmployeesController {
 
 	@Autowired
