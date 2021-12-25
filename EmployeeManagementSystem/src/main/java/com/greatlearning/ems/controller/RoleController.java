@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.greatlearning.ems.dto.RoleDto;
 import com.greatlearning.ems.entity.Role;
-import com.greatlearning.ems.entity.User;
+import com.greatlearning.ems.exception.ResouceInvalidException;
 import com.greatlearning.ems.exception.ResouceNotFoundException;
 import com.greatlearning.ems.spi.RoleService;
-import com.greatlearning.ems.util.RoleHelper;
+import com.greatlearning.ems.util.ResouceValidationUtil;
 
 @RestController
 @RequestMapping("/roles")
@@ -27,19 +27,21 @@ public class RoleController {
 
 	@PostMapping
 	public String post(@RequestBody() RoleDto role) {
-		
+
 		var roleByName = roleService.findByName(role.getName());
 
 		if (roleByName.isPresent()) {
-			return String.format("Role %s already Exist", role.getName());
+			throw new ResouceInvalidException(Role.class, String.format("Role %s already Exist", role.getName()));
 		}
-		
+
 		var newRole = new Role(role.getName());
-		
-		if (!RoleHelper.isValid(newRole)) {
-			return "Role details cannot be empty : " + newRole.toString();
+
+		var validation = ResouceValidationUtil.isValid(newRole);
+
+		if (!validation.getFirst()) {
+			throw new ResouceInvalidException(Role.class, validation.getSecond());
 		}
-		
+
 		roleService.save(newRole);
 		return String.format("Role %s Saved Successfully", role.getName());
 	}
@@ -49,16 +51,16 @@ public class RoleController {
 		var resouceById = roleService.findById(id);
 
 		if (resouceById.isEmpty()) {
-			throw new ResouceNotFoundException(Role.class, (long)id);
+			throw new ResouceNotFoundException(Role.class, (long) id);
 		}
-		
+
 		roleService.deleteById(id);
 		return String.format("Role with id %s Deleted Successfully", id);
 	}
 
 	@GetMapping("{id}")
 	public Role get(@PathVariable int id) {
-		return roleService.findById(id).orElseThrow(() -> new ResouceNotFoundException(Role.class, (long)id));
+		return roleService.findById(id).orElseThrow(() -> new ResouceNotFoundException(Role.class, (long) id));
 	}
 
 	@GetMapping

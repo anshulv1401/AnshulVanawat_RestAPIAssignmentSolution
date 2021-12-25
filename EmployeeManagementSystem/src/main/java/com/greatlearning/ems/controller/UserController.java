@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.greatlearning.ems.dto.UserDto;
-import com.greatlearning.ems.entity.Employee;
 import com.greatlearning.ems.entity.Role;
 import com.greatlearning.ems.entity.User;
+import com.greatlearning.ems.exception.ResouceInvalidException;
 import com.greatlearning.ems.exception.ResouceNotFoundException;
 import com.greatlearning.ems.spi.RoleService;
 import com.greatlearning.ems.spi.UserService;
-import com.greatlearning.ems.util.UserHelper;
+import com.greatlearning.ems.util.ResouceValidationUtil;
 
 @RestController
 @RequestMapping("/users")
@@ -32,17 +32,20 @@ public class UserController {
 
 	@PostMapping()
 	public String post(@RequestBody() UserDto userDto) {
-		
+
 		var userByUserName = userService.findByUserName(userDto.getUsername());
 
 		if (userByUserName.isPresent()) {
-			return String.format("UserName %s already Exist", userDto.getUsername());
+			throw new ResouceInvalidException(User.class,
+					String.format("UserName %s already Exist", userDto.getUsername()));
 		}
-		
+
 		User newUser = new User(userDto.getUsername(), userDto.getPassword(), userDto.getRoles());
 
-		if (!UserHelper.isValid(newUser)) {
-			return "User details not valid : " + newUser.toString();
+		var validation = ResouceValidationUtil.isValid(newUser);
+
+		if (!validation.getFirst()) {
+			throw new ResouceInvalidException(User.class, validation.getSecond());
 		}
 
 		for (Role role : userDto.getRoles()) {
@@ -62,16 +65,16 @@ public class UserController {
 		var resouceById = userService.findById(id);
 
 		if (resouceById.isEmpty()) {
-			throw new ResouceNotFoundException(User.class, (long)id);
+			throw new ResouceNotFoundException(User.class, (long) id);
 		}
-		
+
 		userService.deleteById(id);
 		return String.format("User with id %s Deleted Successfully", id);
 	}
 
 	@GetMapping("{id}")
 	public User get(@PathVariable int id) {
-		return userService.findById(id).orElseThrow(() -> new ResouceNotFoundException(User.class, (long)id));
+		return userService.findById(id).orElseThrow(() -> new ResouceNotFoundException(User.class, (long) id));
 	}
 
 	@GetMapping

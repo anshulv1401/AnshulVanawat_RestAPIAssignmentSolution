@@ -19,7 +19,7 @@ import com.greatlearning.ems.entity.Employee;
 import com.greatlearning.ems.exception.ResouceInvalidException;
 import com.greatlearning.ems.exception.ResouceNotFoundException;
 import com.greatlearning.ems.spi.EmployeeService;
-import com.greatlearning.ems.util.EmployeeHelper;
+import com.greatlearning.ems.util.ResouceValidationUtil;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -34,14 +34,17 @@ public class EmployeesController {
 		var employeeByEmail = employeeService.findByEmail(employeeDto.getEmail());
 
 		if (employeeByEmail.isPresent()) {
-			return String.format("Employee %s already Exist", employeeDto.getEmail());
+			throw new ResouceInvalidException(Employee.class,
+					String.format("Employee %s already Exist", employeeDto.getEmail()));
 		}
 
 		Employee theEmployee = new Employee(employeeDto.getFirstName(), employeeDto.getLastName(),
 				employeeDto.getEmail());
 
-		if (!EmployeeHelper.isValid(theEmployee)) {
-			return "Employee details cannot be empty : " + theEmployee.toString();
+		var validation = ResouceValidationUtil.isValid(theEmployee);
+		
+		if (!validation.getFirst()) {
+			throw new ResouceInvalidException(Employee.class, validation.getSecond());
 		}
 
 		employeeService.save(theEmployee);
@@ -50,40 +53,30 @@ public class EmployeesController {
 				employeeDto.getLastName());
 	}
 
-	@GetMapping
-	public List<Employee> get() {
-		return employeeService.findAll();
-	}
-
-	@GetMapping("{id}")
-	public Employee get(@PathVariable long id) {
-		return employeeService.findById(id).orElseThrow(() -> new ResouceNotFoundException(Employee.class, id));
-	}
-
 	@PutMapping("{id}")
 	public Employee put(@RequestBody EmployeeDto employeeDto, @PathVariable long id) throws Exception {
 
+		Employee theEmployee = new Employee(employeeDto.getFirstName(), employeeDto.getLastName(),
+				employeeDto.getEmail());
+
+		var validation = ResouceValidationUtil.isValid(theEmployee);
+
+		if (!validation.getFirst()) {
+			throw new ResouceInvalidException(Employee.class, validation.getSecond());
+		}
+
 		var employeeFromDb = employeeService.findById(id);
 
-		Employee theEmployee;
 		if (employeeFromDb.isPresent()) {
 			theEmployee = employeeFromDb.get();
 			theEmployee.setEmail(employeeDto.getEmail());
 			theEmployee.setFirstName(employeeDto.getFirstName());
 			theEmployee.setLastName(employeeDto.getLastName());
 
-			if (!EmployeeHelper.isValid(theEmployee)) {
-				throw new ResouceInvalidException(Employee.class, theEmployee.toString());
-			}
-
 			employeeService.save(theEmployee);
 		} else {
 			theEmployee = new Employee(id, employeeDto.getFirstName(), employeeDto.getLastName(),
 					employeeDto.getEmail());
-
-			if (!EmployeeHelper.isValid(theEmployee)) {
-				throw new ResouceInvalidException(Employee.class, theEmployee.toString());
-			}
 
 			employeeService.insert(theEmployee);
 		}
@@ -93,13 +86,13 @@ public class EmployeesController {
 
 	@DeleteMapping("{id}")
 	public String delete(@PathVariable long id) {
-		
+
 		var resouceById = employeeService.findById(id);
 
 		if (resouceById.isEmpty()) {
 			throw new ResouceNotFoundException(Employee.class, id);
 		}
-		
+
 		employeeService.deleteById(id);
 		return String.format("Employee %s Deleted Successfully", id);
 	}
@@ -112,6 +105,16 @@ public class EmployeesController {
 	@GetMapping("sort")
 	public List<Employee> get(@RequestParam Direction order) {
 		return employeeService.sortBy(order);
+	}
+
+	@GetMapping
+	public List<Employee> get() {
+		return employeeService.findAll();
+	}
+
+	@GetMapping("{id}")
+	public Employee get(@PathVariable long id) {
+		return employeeService.findById(id).orElseThrow(() -> new ResouceNotFoundException(Employee.class, id));
 	}
 
 }
