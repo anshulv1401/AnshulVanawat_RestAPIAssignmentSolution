@@ -1,5 +1,7 @@
 package com.greatlearning.ems.entity;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,5 +31,15 @@ public class Role {
 	public Role(String name) {
 		super();
 		this.name = name;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Role))
+			return false;
+		Role role = (Role) o;
+		return Objects.equals(this.id, role.id) && Objects.equals(this.name, role.name);
 	}
 }

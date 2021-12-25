@@ -27,12 +27,11 @@ public class EmployeesController {
 	@Autowired
 	private EmployeeService employeeService;
 
-	EmployeeHelper helper = new EmployeeHelper();
-
 	@PostMapping("add")
 	public String post(@RequestBody() EmployeeDto employeeDto) throws Exception {
 
 		var employeeByEmail = employeeService.findByEmail(employeeDto.getEmail());
+		
 		if (employeeByEmail.isPresent()) {
 			return String.format("Employee %s already Exist", employeeDto.getEmail());
 		}
@@ -40,8 +39,8 @@ public class EmployeesController {
 		Employee theEmployee = new Employee(employeeDto.getFirstName(), employeeDto.getLastName(),
 				employeeDto.getEmail());
 
-		if (!helper.isValid(theEmployee)) {
-			throw new Exception("Employee details cannot be empty");
+		if (!EmployeeHelper.isValid(theEmployee)) {
+			return "Employee details cannot be empty : " + theEmployee.toString();
 		}
 		
 		employeeService.save(theEmployee);
@@ -66,29 +65,29 @@ public class EmployeesController {
 
 		var employeeFromDb = employeeService.findById(id);
 
-		Employee employee;
+		Employee theEmployee;
 		if (employeeFromDb.isPresent()) {
-			employee = employeeFromDb.get();
-			employee.setEmail(employeeDto.getEmail());
-			employee.setFirstName(employeeDto.getFirstName());
-			employee.setLastName(employeeDto.getLastName());
+			theEmployee = employeeFromDb.get();
+			theEmployee.setEmail(employeeDto.getEmail());
+			theEmployee.setFirstName(employeeDto.getFirstName());
+			theEmployee.setLastName(employeeDto.getLastName());
 			
-			if (!helper.isValid(employee)) {
-				throw new Exception("Employee details cannot be empty");
+			if (!EmployeeHelper.isValid(theEmployee)) {
+				throw new Exception("Employee details cannot be empty : " + theEmployee.toString());
 			}
 			
-			employeeService.save(employee);
+			employeeService.save(theEmployee);
 		} else {
-			employee = new Employee(id, employeeDto.getFirstName(), employeeDto.getLastName(), employeeDto.getEmail());
+			theEmployee = new Employee(id, employeeDto.getFirstName(), employeeDto.getLastName(), employeeDto.getEmail());
 			
-			if (!helper.isValid(employee)) {
-				throw new Exception("Employee details cannot be empty");
+			if (!EmployeeHelper.isValid(theEmployee)) {
+				throw new Exception("Employee details cannot be empty : " + theEmployee.toString());
 			}
 			
-			employeeService.insert(employee);
+			employeeService.insert(theEmployee);
 		}
 		
-		return employee;
+		return theEmployee;
 	}
 
 	@DeleteMapping("{id}")

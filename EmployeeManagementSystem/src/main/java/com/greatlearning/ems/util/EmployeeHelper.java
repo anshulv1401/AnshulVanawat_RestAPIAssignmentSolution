@@ -4,7 +4,7 @@ import com.greatlearning.ems.entity.Employee;
 
 public class EmployeeHelper {
 
-	public boolean isValid(Employee employee) {
+	public static boolean isValid(Employee employee) {
 		if (isEmplyOrNull(employee.getFirstName())) {
 			return false;
 		}
@@ -17,7 +17,7 @@ public class EmployeeHelper {
 		return true;
 	}
 
-	private boolean isEmplyOrNull(String string) {
+	private static boolean isEmplyOrNull(String string) {
 		if (string == null || string.isEmpty() || string.trim().isEmpty()) {
 			return true;
 		} else {

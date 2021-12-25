@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.greatlearning.ems.dto.UserDto;
+import com.greatlearning.ems.entity.Role;
 import com.greatlearning.ems.entity.User;
+import com.greatlearning.ems.spi.RoleService;
 import com.greatlearning.ems.spi.UserService;
+import com.greatlearning.ems.util.UserHelper;
 
 @RestController
 @RequestMapping("/users")
@@ -22,9 +25,25 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private RoleService roleService;
+
 	@PostMapping()
 	public String post(@RequestBody() UserDto userDto) {
 		User newUser = new User(userDto.getUsername(), userDto.getPassword(), userDto.getRoles());
+
+		if (!UserHelper.isValid(newUser)) {
+			return "User details not valid : " + newUser.toString();
+		}
+
+		for (Role role : userDto.getRoles()) {
+			var roleFromDB = roleService.findById(role.getId());
+
+			if (roleFromDB.isEmpty() || !roleFromDB.get().equals(role)) {
+				return String.format("Role with details %s not found", role.toString());
+			}
+		}
+
 		userService.save(newUser);
 		return String.format("User %s Created Successfully", userDto.getUsername());
 	}
