@@ -30,17 +30,13 @@ public class RoleController {
 	@PostMapping
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public String post(@RequestBody() RoleDto role) {
-
 		var roleByName = roleService.findByName(role.getName());
-
 		if (roleByName.isPresent()) {
 			throw new ResouceInvalidException(Role.class, String.format("Role %s already Exist", role.getName()));
 		}
 
 		var newRole = new Role(role.getName());
-
 		var validation = ResouceValidationUtil.isValid(newRole);
-
 		if (!validation.getFirst()) {
 			throw new ResouceInvalidException(Role.class, validation.getSecond());
 		}
@@ -52,7 +48,6 @@ public class RoleController {
 	@DeleteMapping("{id}")
 	public String delete(@PathVariable int id) {
 		var resouceById = roleService.findById(id);
-
 		if (resouceById.isEmpty()) {
 			throw new ResouceNotFoundException(Role.class, (long) id);
 		}

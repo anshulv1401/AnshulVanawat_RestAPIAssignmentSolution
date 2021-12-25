@@ -33,9 +33,7 @@ public class EmployeesController {
 	@PostMapping()
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public String post(@RequestBody() EmployeeDto employeeDto) throws Exception {
-
 		var employeeByEmail = employeeService.findByEmail(employeeDto.getEmail());
-
 		if (employeeByEmail.isPresent()) {
 			throw new ResouceInvalidException(Employee.class,
 					String.format("Employee %s already Exist", employeeDto.getEmail()));
@@ -45,42 +43,35 @@ public class EmployeesController {
 				employeeDto.getEmail());
 
 		var validation = ResouceValidationUtil.isValid(theEmployee);
-		
 		if (!validation.getFirst()) {
 			throw new ResouceInvalidException(Employee.class, validation.getSecond());
 		}
 
 		employeeService.save(theEmployee);
-
 		return String.format("Employee %1$s %2$s Saved Successfully", employeeDto.getFirstName(),
 				employeeDto.getLastName());
 	}
 
 	@PutMapping("{id}")
 	public Employee put(@RequestBody EmployeeDto employeeDto, @PathVariable long id) throws Exception {
-
 		Employee theEmployee = new Employee(employeeDto.getFirstName(), employeeDto.getLastName(),
 				employeeDto.getEmail());
 
 		var validation = ResouceValidationUtil.isValid(theEmployee);
-
 		if (!validation.getFirst()) {
 			throw new ResouceInvalidException(Employee.class, validation.getSecond());
 		}
 
 		var employeeFromDb = employeeService.findById(id);
-
 		if (employeeFromDb.isPresent()) {
 			theEmployee = employeeFromDb.get();
 			theEmployee.setEmail(employeeDto.getEmail());
 			theEmployee.setFirstName(employeeDto.getFirstName());
 			theEmployee.setLastName(employeeDto.getLastName());
-
 			employeeService.save(theEmployee);
 		} else {
 			theEmployee = new Employee(id, employeeDto.getFirstName(), employeeDto.getLastName(),
 					employeeDto.getEmail());
-
 			employeeService.insert(theEmployee);
 		}
 
@@ -89,9 +80,7 @@ public class EmployeesController {
 
 	@DeleteMapping("{id}")
 	public String delete(@PathVariable long id) {
-
 		var resouceById = employeeService.findById(id);
-
 		if (resouceById.isEmpty()) {
 			throw new ResouceNotFoundException(Employee.class, id);
 		}

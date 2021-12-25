@@ -37,16 +37,13 @@ public class UserController {
 	public String post(@RequestBody() UserDto userDto) {
 
 		var userByUserName = userService.findByUserName(userDto.getUsername());
-
 		if (userByUserName.isPresent()) {
 			throw new ResouceInvalidException(User.class,
 					String.format("UserName %s already Exist", userDto.getUsername()));
 		}
 
 		User newUser = new User(userDto.getUsername(), userDto.getPassword(), userDto.getRoles());
-
 		var validation = ResouceValidationUtil.isValid(newUser);
-
 		if (!validation.getFirst()) {
 			throw new ResouceInvalidException(User.class, validation.getSecond());
 		}
@@ -66,7 +63,6 @@ public class UserController {
 	@DeleteMapping("{id}")
 	public String delete(@PathVariable int id) {
 		var resouceById = userService.findById(id);
-
 		if (resouceById.isEmpty()) {
 			throw new ResouceNotFoundException(User.class, (long) id);
 		}

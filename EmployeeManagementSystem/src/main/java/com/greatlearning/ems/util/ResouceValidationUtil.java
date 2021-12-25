@@ -31,7 +31,7 @@ public class ResouceValidationUtil {
 
 		for (Role role : user.getRoles()) {
 			var validation = isValid(role);
-			
+
 			if (!validation.getFirst()) {
 				return Pair.of(false, "Invalid role details : " + validation.getSecond());
 			}

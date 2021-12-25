@@ -10,9 +10,9 @@ import lombok.Data;
 public class UserDto {
 
 	private String username;
-	
+
 	private String password;
-	
-	private ArrayList<Role> roles; 
-	
+
+	private ArrayList<Role> roles;
+
 }

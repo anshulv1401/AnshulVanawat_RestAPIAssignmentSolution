@@ -12,7 +12,7 @@ public class HomeController {
 	public String get() {
 		return "Welcome to Employee Management System";
 	}
-	
+
 	@GetMapping("accessDenied")
 	public String accessDenied() {
 		return "Access Denied";

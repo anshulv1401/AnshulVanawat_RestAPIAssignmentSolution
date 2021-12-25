@@ -13,7 +13,7 @@ import com.greatlearning.ems.spi.RoleService;
 
 @Service
 public class RoleServiceImpl implements RoleService {
-	
+
 	@Autowired
 	RoleRepository roleRepository;
 
@@ -47,5 +47,5 @@ public class RoleServiceImpl implements RoleService {
 	public Optional<Role> findByName(String name) {
 		return Optional.ofNullable(roleRepository.getRoleByName(name));
 	}
-	
+
 }
