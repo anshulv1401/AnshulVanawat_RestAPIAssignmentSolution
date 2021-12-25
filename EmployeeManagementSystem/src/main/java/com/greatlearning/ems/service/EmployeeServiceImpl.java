@@ -12,13 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.greatlearning.ems.entity.Employee;
-import com.greatlearning.ems.entity.User;
 import com.greatlearning.ems.repository.EmployeeRepository;
 import com.greatlearning.ems.spi.EmployeeService;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-	
+
 	@Autowired
 	EmployeeRepository employeeRepository;
 
@@ -31,7 +30,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	@Transactional
-	public Optional<Employee> findById(int theId) {
+	public Optional<Employee> findById(long theId) {
 		return employeeRepository.findById(theId);
 	}
 
@@ -43,7 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	@Transactional
-	public void deleteById(int theId) {
+	public void deleteById(long theId) {
 		employeeRepository.deleteById(theId);
 	}
 
@@ -61,7 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public Optional<Employee> findByEmail(String theEmail) {
-		
+
 		Employee employeeWithEmail = new Employee();
 		employeeWithEmail.setEmail(theEmail);
 		ExampleMatcher matcher = ExampleMatcher.matching()
@@ -71,5 +70,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Example<Employee> example = Example.of(employeeWithEmail, matcher);
 
 		return employeeRepository.findOne(example);
+	}
+
+	@Override
+	@Transactional
+	public void insert(Employee theEmployee) {
+
+		if (theEmployee.getId() == null || theEmployee.getEmail() == null) {
+			return;
+		}
+
+		employeeRepository.insertEmploye(theEmployee.getId(), theEmployee.getFirstName(), theEmployee.getLastName(),
+				theEmployee.getEmail());
 	}
 }

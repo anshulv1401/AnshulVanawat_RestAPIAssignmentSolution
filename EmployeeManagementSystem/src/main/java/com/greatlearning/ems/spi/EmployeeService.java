@@ -9,10 +9,11 @@ import com.greatlearning.ems.entity.Employee;
 
 public interface EmployeeService {
 	public List<Employee> findAll();
-	public Optional<Employee> findById(int theId);
+	public Optional<Employee> findById(long theId);
 	public Optional<Employee> findByEmail(String theEmail);
 	public void save(Employee theEmployee);
-	public void deleteById(int theId);
+	public void insert(Employee theEmployee);
+	public void deleteById(long theId);
 	public List<Employee> searchBy(String firstName);
 	public List<Employee> sortBy(Direction direction);
 }

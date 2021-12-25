@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.greatlearning.ems.dto.EmployeeDto;
 import com.greatlearning.ems.entity.Employee;
+import com.greatlearning.ems.exception.EmployeeNotFoundException;
 import com.greatlearning.ems.spi.EmployeeService;
+import com.greatlearning.ems.util.EmployeeHelper;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -25,8 +27,10 @@ public class EmployeesController {
 	@Autowired
 	private EmployeeService employeeService;
 
+	EmployeeHelper helper = new EmployeeHelper();
+
 	@PostMapping("add")
-	public String post(@RequestBody() EmployeeDto employeeDto) {
+	public String post(@RequestBody() EmployeeDto employeeDto) throws Exception {
 
 		var employeeByEmail = employeeService.findByEmail(employeeDto.getEmail());
 		if (employeeByEmail.isPresent()) {
@@ -36,6 +40,10 @@ public class EmployeesController {
 		Employee theEmployee = new Employee(employeeDto.getFirstName(), employeeDto.getLastName(),
 				employeeDto.getEmail());
 
+		if (!helper.isValid(theEmployee)) {
+			throw new Exception("Employee details cannot be empty");
+		}
+		
 		employeeService.save(theEmployee);
 
 		return String.format("Employee %1$s %2$s Saved Successfully", employeeDto.getFirstName(),
@@ -48,13 +56,13 @@ public class EmployeesController {
 	}
 
 	@GetMapping("{id}")
-	public Employee get(@PathVariable int id) {
-		var emp = employeeService.findById(id);
-		return emp.get();
+	public Employee get(@PathVariable long id) {
+		return employeeService.findById(id)
+			      .orElseThrow(() -> new EmployeeNotFoundException(id));
 	}
 
 	@PutMapping("{id}")
-	public Employee put(@RequestBody EmployeeDto employeeDto, @PathVariable int id) {
+	public Employee put(@RequestBody EmployeeDto employeeDto, @PathVariable long id) throws Exception {
 
 		var employeeFromDb = employeeService.findById(id);
 
@@ -64,22 +72,31 @@ public class EmployeesController {
 			employee.setEmail(employeeDto.getEmail());
 			employee.setFirstName(employeeDto.getFirstName());
 			employee.setLastName(employeeDto.getLastName());
+			
+			if (!helper.isValid(employee)) {
+				throw new Exception("Employee details cannot be empty");
+			}
+			
 			employeeService.save(employee);
 		} else {
 			employee = new Employee(id, employeeDto.getFirstName(), employeeDto.getLastName(), employeeDto.getEmail());
-			employeeService.save(employee);
+			
+			if (!helper.isValid(employee)) {
+				throw new Exception("Employee details cannot be empty");
+			}
+			
+			employeeService.insert(employee);
 		}
-
-		employeeService.save(employee);
+		
 		return employee;
 	}
 
 	@DeleteMapping("{id}")
-	public String delete(@PathVariable int id) {
+	public String delete(@PathVariable long id) {
 		employeeService.deleteById(id);
 		return String.format("Employee %s Deleted Successfully", id);
 	}
-	
+
 	@GetMapping("search/{firstName}")
 	public List<Employee> get(@PathVariable String firstName) {
 		return employeeService.searchBy(firstName);
