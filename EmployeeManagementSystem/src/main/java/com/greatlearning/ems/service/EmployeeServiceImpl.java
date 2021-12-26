@@ -1,5 +1,6 @@
 package com.greatlearning.ems.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +56,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public List<Employee> sortBy(Direction direction) {
-		return employeeRepository.findAll(Sort.by(direction, "firstName"));
+		switch (direction) {
+		case ASC:
+			return employeeRepository.findAll(Sort.by(Sort.Order.asc("firstName").ignoreCase()));
+		case DESC:
+			return employeeRepository.findAll(Sort.by(Sort.Order.desc("firstName").ignoreCase()));
+		default:
+			return new ArrayList<Employee>();
+		}
 	}
 
 	@Override
