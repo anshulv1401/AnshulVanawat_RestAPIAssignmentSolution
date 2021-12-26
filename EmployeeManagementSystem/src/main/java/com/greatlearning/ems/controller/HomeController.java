@@ -1,5 +1,6 @@
 package com.greatlearning.ems.controller;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +11,8 @@ public class HomeController {
 
 	@GetMapping
 	public String get() {
-		return "Welcome to Employee Management System";
+		var auth = SecurityContextHolder.getContext().getAuthentication();
+		return String.format("Welcome %s to Employee Management System", auth.getName());
 	}
 
 	@GetMapping("accessDenied")

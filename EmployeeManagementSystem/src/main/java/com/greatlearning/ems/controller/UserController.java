@@ -52,7 +52,8 @@ public class UserController {
 			var roleFromDB = roleService.findById(role.getId());
 
 			if (roleFromDB.isEmpty() || !roleFromDB.get().equals(role)) {
-				return String.format("Role with details %s not found", role.toString());
+				throw new ResouceInvalidException(User.class,
+						String.format("Role with details %s not found", role.toString()));
 			}
 		}
 
